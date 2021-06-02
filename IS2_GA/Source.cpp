@@ -21,7 +21,7 @@ struct ga_struct
 	unsigned int rating; // пригодность
 };
 
-// формиирование первой (начальной) популяции
+// формирование первой (начальной) популяции
 void first_population(vector<ga_struct>& cur_population, vector<ga_struct>& next_population) {
 	int target_size = GA_TARGET.size();
 
@@ -31,6 +31,7 @@ void first_population(vector<ga_struct>& cur_population, vector<ga_struct>& next
 		chromosoma.rating = 0;
 		chromosoma.str.erase();
 
+		// формиирование хромосом
 		for (int j = 0; j < target_size; j++) {
 			chromosoma.str += GA_TABLE[(rand() % GA_TABLE.size())];
 		}
@@ -50,6 +51,7 @@ void calc_rating(vector<ga_struct>& population) {
 	for (int i = 0; i < GA_SIZE; i++) {
 		rating = 0;
 		for (int j = 0; j < target_size; j++) {
+			// Округляем результат до целого для ускорения вычислений
 			rating += abs(int(population[i].str[j] - target[j]));
 		}
 
@@ -57,6 +59,7 @@ void calc_rating(vector<ga_struct>& population) {
 	}
 }
 
+// компаратор для сравнения популяций
 bool sort_by_rating_comp(ga_struct a, ga_struct b) {
 	return (a.rating < b.rating);
 }
@@ -90,6 +93,7 @@ void mate(vector<ga_struct>& cur_population, vector<ga_struct>& next_population)
 	int p1;
 	int p2;
 
+	// селекция
 	selection(cur_population, next_population, best_size);
 
 
@@ -98,9 +102,11 @@ void mate(vector<ga_struct>& cur_population, vector<ga_struct>& next_population)
 		p2 = rand() % (GA_SIZE / 2);
 		rand_target = rand() % target_size;
 
+		// скрещивание
 		next_population[i].str = cur_population[p1].str.substr(0, rand_target) +
 			cur_population[p2].str.substr(rand_target, best_size - rand_target);
 
+		// матация
 		if (rand() < GA_MUTATION) {
 			mutate(next_population[i]);
 		}
@@ -127,7 +133,7 @@ int main() {
 	vector<ga_struct> pop_a, pop_b;
 	vector<ga_struct>* cur_population, * next_population;
 
-	first_population(pop_a, pop_b);
+	first_population(pop_a, pop_b); // формирование первой (начальной) популяции
 	cur_population = &pop_a;
 	next_population = &pop_b;
 
